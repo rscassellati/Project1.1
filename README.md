@@ -1,5 +1,79 @@
 # Create Your Own IMDb
 
+## SQL CREATE TABLE statements
+Please note: data.sql was updated to change Users to User to resolve the discrepancy. I followed the language in the diagrams and on the PA instructions.
+
+CREATE TABLE User (
+	email CHAR(254), 
+	name CHAR(30), 
+	age INT, 
+	PRIMARY KEY(email));
+
+CREATE TABLE MotionPicture (
+	id CHAR(3) PRIMARY KEY, 
+	name CHAR(50), 
+	rating FLOAT CHECK (rating >= 0 AND rating <= 10),
+	production CHAR(30),
+	budget INT CHECK (budget > 0));
+
+CREATE TABLE Likes (
+	uemail CHAR(254),
+	mpid CHAR(3),
+	PRIMARY KEY (uemail, mpid),
+	FOREIGN KEY (uemail) REFERENCES User(email),
+	FOREIGN KEY (mpid) REFERENCES MotionPicture(id));
+
+CREATE TABLE Movie (
+	mpid CHAR(3),
+	boxoffice_collection FLOAT CHECK (boxoffice_collection >= 0),
+	PRIMARY KEY (mpid),
+	FOREIGN KEY (mpid) REFERENCES MotionPicture(id));
+
+CREATE TABLE Series (
+	mpid CHAR(3),
+	season_count INT CHECK (season_count >= 1),
+	PRIMARY KEY (mpid),
+	FOREIGN KEY (mpid) REFERENCES MotionPicture(id));
+
+CREATE TABLE People (
+	id CHAR(3) PRIMARY KEY,
+	name CHAR(50),
+	nationality CHAR(30),
+	dob DATE,
+	gender CHAR(1));
+
+CREATE TABLE Role (
+	mpid CHAR(3),
+	pid CHAR(3),
+	role_name CHAR(25),
+	PRIMARY KEY (mpid, pid, role_name),
+	FOREIGN KEY (mpid) REFERENCES MotionPicture(id),
+	FOREIGN KEY (pid) REFERENCES People(id));
+
+CREATE TABLE Award (
+	mpid CHAR(3),
+	pid CHAR(3),
+	award_name CHAR(30),
+	award_year INT(4),
+	PRIMARY KEY (mpid, pid, award_name, award_year),
+	FOREIGN KEY (mpid) REFERENCES MotionPicture(id),
+	FOREIGN KEY (pid) REFERENCES People(id));
+
+CREATE TABLE Genre (
+	mpid CHAR(3),
+	genre_name CHAR(20),
+	PRIMARY KEY (mpid, genre_name),
+	FOREIGN KEY (mpid) REFERENCES MotionPicture(id));
+
+CREATE TABLE Location (
+	mpid CHAR(3) NOT NULL,
+	zip INT,
+	city CHAR(25),
+	country CHAR(30),
+	PRIMARY KEY (mpid, zip),
+	FOREIGN KEY (mpid) REFERENCES MotionPicture(id)
+	ON DELETE CASCADE);
+
 ## Overview
 This project is a simple web application similar to IMDb that interacts with a MySQL/MariaDB database. The application features a Flask-based UI that allows users to **view movie and actor details, like movies, and execute SQL queries**.
 
